@@ -48,6 +48,28 @@ func handlePostData(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("I got message:\n%s", d)))
 }
 
+func handlePostHeaders(w http.ResponseWriter, r *http.Request) {
+	a := r.Header.Get("a")
+	b := r.Header.Get("b")
+
+	if len(a) == 0 || len(b) == 0 {
+		return
+	}
+
+	aval, err := strconv.Atoi(a)
+	if err != nil {
+		return
+	}
+
+	bval, err := strconv.Atoi(b)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Add("a+b", strconv.Itoa(aval+bval))
+}
+
 // Start /** Starts the web server listener on given host and port.
 func Start(host string, port int) {
 	router := mux.NewRouter()
@@ -55,6 +77,7 @@ func Start(host string, port int) {
 	router.HandleFunc("/name/{PARAM}", handleGetParam).Methods(http.MethodGet)
 	router.HandleFunc("/bad", handleGetBad).Methods(http.MethodGet)
 	router.HandleFunc("/data", handlePostData).Methods(http.MethodPost)
+	router.HandleFunc("/headers", handlePostHeaders).Methods(http.MethodPost)
 
 	log.Println(fmt.Printf("Starting API server on %s:%d\n", host, port))
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), router); err != nil {
