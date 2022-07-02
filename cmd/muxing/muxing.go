@@ -52,6 +52,9 @@ func handlePostHeaders(w http.ResponseWriter, r *http.Request) {
 	a := r.Header.Get("a")
 	b := r.Header.Get("b")
 
+	log.Println(a)
+	log.Println(b)
+
 	if len(a) == 0 || len(b) == 0 {
 		return
 	}
@@ -66,8 +69,8 @@ func handlePostHeaders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("a+b", strconv.Itoa(aval+bval))
+	w.WriteHeader(http.StatusOK)
 }
 
 // Start /** Starts the web server listener on given host and port.
